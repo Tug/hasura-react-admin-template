@@ -65,16 +65,15 @@ then
 fi
 
 await_console() {
+    # Wait for Hasura Graphql Engine" before starting the console
+    echo "Waiting for Hasura Backend Plus to be ready..."
+    until $(curl -X GET --output /dev/null --silent --head --fail http://localhost:4000/healthz); do
+        sleep 1
+    done
+
+    hasura metadata apply
+
     if [ "$mode" != "test" ]; then
-        # Wait for Hasura Graphql Engine" before starting the console
-        echo "Waiting for Hasura Backend Plus to be ready..."
-        until $(curl -X GET --output /dev/null --silent --head --fail http://localhost:4000/healthz); do
-            sleep 1
-        done
-        # Set the Hasura config.yaml file
-        # * HBP uses config v1 so far
-        # printf 'version: 2\nendpoint: http://localhost:8080\nadmin_secret: %s\nmetadata_directory: metadata'  $HASURA_GRAPHQL_ADMIN_SECRET > config.yaml
-        printf 'version: 1\nendpoint: http://localhost:8080\nadmin_secret: %s\nmetadata_directory: metadata'  $HASURA_GRAPHQL_ADMIN_SECRET > config.yaml
         hasura console
     fi
 }
@@ -88,12 +87,14 @@ trap clean_exit INT
 clean_exit() {
     echo "Cleaning up..."
     if [ "$mode" != "test" ]; then # Kill Hasura Console
+        hasura metadata export
         ps -ef | grep 'hasura console' | grep -v grep | awk '{print $2}' | xargs kill -9
     fi
     # Stop all docker services
     docker-compose -p "hbp_${mode}" down $remove --remove-orphans
     exit
 }
+
 
 # * Start on background in waiting for Hasura to be ready so the console can be launched
 await_console &
