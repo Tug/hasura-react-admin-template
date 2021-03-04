@@ -1,0 +1,741 @@
+- args:
+    name: generated_text
+    schema: public
+  type: add_existing_table_or_view
+- args:
+    name: jobs
+    schema: public
+  type: add_existing_table_or_view
+- args:
+    name: job_status
+    schema: public
+  type: add_existing_table_or_view
+- args:
+    name: job_types
+    schema: public
+  type: add_existing_table_or_view
+- args:
+    name: models
+    schema: public
+  type: add_existing_table_or_view
+- args:
+    name: organization_models
+    schema: public
+  type: add_existing_table_or_view
+- args:
+    name: organizations
+    schema: public
+  type: add_existing_table_or_view
+- args:
+    name: job
+    table:
+      name: generated_text
+      schema: public
+    using:
+      foreign_key_constraint_on: job_id
+  type: create_object_relationship
+- args:
+    name: model
+    table:
+      name: jobs
+      schema: public
+    using:
+      foreign_key_constraint_on: model_id
+  type: create_object_relationship
+- args:
+    name: status
+    table:
+      name: jobs
+      schema: public
+    using:
+      foreign_key_constraint_on: status_id
+  type: create_object_relationship
+- args:
+    name: type
+    table:
+      name: jobs
+      schema: public
+    using:
+      foreign_key_constraint_on: type_id
+  type: create_object_relationship
+- args:
+    name: parent_model
+    table:
+      name: models
+      schema: public
+    using:
+      foreign_key_constraint_on: parent_model_id
+  type: create_object_relationship
+- args:
+    name: admin
+    table:
+      name: organizations
+      schema: public
+    using:
+      foreign_key_constraint_on: admin_id
+  type: create_object_relationship
+- args:
+    name: organization
+    table:
+      name: users
+      schema: public
+    using:
+      foreign_key_constraint_on: organization_id
+  type: create_object_relationship
+- args:
+    name: generated_texts
+    table:
+      name: jobs
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: job_id
+        table:
+          name: generated_text
+          schema: public
+  type: create_array_relationship
+- args:
+    name: jobs
+    table:
+      name: models
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: model_id
+        table:
+          name: jobs
+          schema: public
+  type: create_array_relationship
+- args:
+    name: organization_models
+    table:
+      name: models
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: model_id
+        table:
+          name: organization_models
+          schema: public
+  type: create_array_relationship
+- args:
+    name: models
+    table:
+      name: organizations
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: organization_id
+        table:
+          name: organization_models
+          schema: public
+  type: create_array_relationship
+- args:
+    name: admin_user
+    table:
+      name: users
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: admin_id
+        table:
+          name: organizations
+          schema: public
+  type: create_array_relationship
+- args:
+    permission:
+      backend_only: false
+      check:
+        user:
+          organization_id:
+            _eq: X-Hasura-Organization-Id
+      columns:
+      - active
+      - default_role
+      - email
+      - mfa_enabled
+      - user_id
+    role: orgAdmin
+    table:
+      name: accounts
+      schema: auth
+  type: create_insert_permission
+- args:
+    permission:
+      backend_only: false
+      check:
+        creator_id:
+          _eq: X-Hasura-User-Id
+      columns:
+      - creator_id
+      - model_id
+      - name
+      - params
+      - type_id
+    role: orgAdmin
+    table:
+      name: jobs
+      schema: public
+  type: create_insert_permission
+- args:
+    permission:
+      backend_only: false
+      check:
+        _or:
+        - creator_id:
+            _eq: X-Hasura-User-Id
+        - organization_id:
+            _eq: X-Hasura-Organization-Id
+      columns:
+      - creator_id
+      - model_id
+      - name
+      - organization_id
+      - params
+      - type_id
+    role: user
+    table:
+      name: jobs
+      schema: public
+  type: create_insert_permission
+- args:
+    permission:
+      backend_only: false
+      check: {}
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+    role: orgAdmin
+    table:
+      name: models
+      schema: public
+  type: create_insert_permission
+- args:
+    permission:
+      backend_only: false
+      check: {}
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+    role: user
+    table:
+      name: models
+      schema: public
+  type: create_insert_permission
+- args:
+    permission:
+      backend_only: false
+      check:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+      columns:
+      - model_id
+    role: orgAdmin
+    table:
+      name: organization_models
+      schema: public
+  type: create_insert_permission
+- args:
+    permission:
+      backend_only: false
+      check:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+      columns:
+      - avatar_url
+      - display_name
+      - updated_at
+    role: orgAdmin
+    table:
+      name: users
+      schema: public
+  type: create_insert_permission
+- args:
+    permission:
+      columns:
+      - account_id
+      - created_at
+      - id
+      - role
+      filter:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+    role: orgAdmin
+    table:
+      name: account_roles
+      schema: auth
+  type: create_select_permission
+- args:
+    permission:
+      columns:
+      - role
+      filter:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+    role: user
+    table:
+      name: account_roles
+      schema: auth
+  type: create_select_permission
+- args:
+    permission:
+      columns:
+      - active
+      - created_at
+      - default_role
+      - email
+      - is_anonymous
+      - mfa_enabled
+      - user_id
+      filter:
+        user:
+          organization_id:
+            _eq: X-Hasura-Organization-Id
+    role: orgAdmin
+    table:
+      name: accounts
+      schema: auth
+  type: create_select_permission
+- args:
+    permission:
+      columns:
+      - active
+      - created_at
+      - default_role
+      - email
+      - id
+      - is_anonymous
+      - mfa_enabled
+      - new_email
+      - ticket_expires_at
+      - updated_at
+      - user_id
+      filter:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+    role: user
+    table:
+      name: accounts
+      schema: auth
+  type: create_select_permission
+- args:
+    permission:
+      columns:
+      - role
+      filter: {}
+    role: orgAdmin
+    table:
+      name: roles
+      schema: auth
+  type: create_select_permission
+- args:
+    permission:
+      columns:
+      - role
+      filter: {}
+    role: user
+    table:
+      name: roles
+      schema: auth
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - id
+      - value
+      filter: {}
+    role: orgAdmin
+    table:
+      name: job_status
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - id
+      - value
+      filter: {}
+    role: user
+    table:
+      name: job_status
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - id
+      - value
+      filter: {}
+    role: orgAdmin
+    table:
+      name: job_types
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - id
+      - value
+      filter: {}
+    role: user
+    table:
+      name: job_types
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - id
+      - model_id
+      - organization_id
+      - status_id
+      - type_id
+      - params
+      - name
+      - created_at
+      - ended_at
+      - started_at
+      - creator_id
+      filter:
+        creator_id:
+          _eq: X-Hasura-User-Id
+    role: orgAdmin
+    table:
+      name: jobs
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - id
+      - created_at
+      - started_at
+      - name
+      - model_id
+      - params
+      - status_id
+      - type_id
+      - ended_at
+      - organization_id
+      - creator_id
+      filter:
+        _or:
+        - creator_id:
+            _eq: X-Hasura-User-Id
+        - organization_id:
+            _eq: X-Hasura-Organization-Id
+    role: user
+    table:
+      name: jobs
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+      filter: {}
+    role: orgAdmin
+    table:
+      name: models
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+      filter: {}
+    role: user
+    table:
+      name: models
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - model_id
+      - organization_id
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+    role: orgAdmin
+    table:
+      name: organization_models
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - model_id
+      - organization_id
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+    role: user
+    table:
+      name: organization_models
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - admin_id
+      - id
+      - name
+      filter:
+        id:
+          _eq: X-Hasura-Organization-Id
+    role: orgAdmin
+    table:
+      name: organizations
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - admin_id
+      - id
+      - name
+      filter:
+        id:
+          _eq: X-Hasura-Organization-Id
+    role: user
+    table:
+      name: organizations
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - organization_id
+      - avatar_url
+      - display_name
+      - created_at
+      - updated_at
+      - id
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+    role: orgAdmin
+    table:
+      name: users
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - avatar_url
+      - created_at
+      - display_name
+      - id
+      - organization_id
+      - updated_at
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+    role: user
+    table:
+      name: users
+      schema: public
+  type: create_select_permission
+- args:
+    permission:
+      check: null
+      columns:
+      - active
+      - email
+      - is_anonymous
+      - mfa_enabled
+      - new_email
+      filter:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+    role: user
+    table:
+      name: accounts
+      schema: auth
+  type: create_update_permission
+- args:
+    permission:
+      check: null
+      columns:
+      - params
+      filter:
+        creator_id:
+          _eq: X-Hasura-User-Id
+    role: orgAdmin
+    table:
+      name: jobs
+      schema: public
+  type: create_update_permission
+- args:
+    permission:
+      check: null
+      columns:
+      - name
+      - params
+      filter:
+        _or:
+        - creator_id:
+            _eq: X-Hasura-User-Id
+        - organization_id:
+            _eq: X-Hasura-Organization-Id
+    role: user
+    table:
+      name: jobs
+      schema: public
+  type: create_update_permission
+- args:
+    permission:
+      check: null
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+      filter: {}
+    role: orgAdmin
+    table:
+      name: models
+      schema: public
+  type: create_update_permission
+- args:
+    permission:
+      check: null
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+      filter: {}
+    role: user
+    table:
+      name: models
+      schema: public
+  type: create_update_permission
+- args:
+    permission:
+      check: null
+      columns:
+      - organization_id
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+    role: orgAdmin
+    table:
+      name: organization_models
+      schema: public
+  type: create_update_permission
+- args:
+    permission:
+      check: null
+      columns:
+      - avatar_url
+      - display_name
+      - updated_at
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+    role: orgAdmin
+    table:
+      name: users
+      schema: public
+  type: create_update_permission
+- args:
+    permission:
+      check: null
+      columns:
+      - avatar_url
+      - display_name
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+    role: user
+    table:
+      name: users
+      schema: public
+  type: create_update_permission
+- args:
+    permission:
+      filter:
+        creator_id:
+          _eq: X-Hasura-User-Id
+    role: orgAdmin
+    table:
+      name: jobs
+      schema: public
+  type: create_delete_permission
+- args:
+    permission:
+      filter:
+        _or:
+        - creator_id:
+            _eq: X-Hasura-User-Id
+        - organization_id:
+            _eq: X-Hasura-Organization-Id
+    role: user
+    table:
+      name: jobs
+      schema: public
+  type: create_delete_permission
+- args:
+    permission:
+      filter: {}
+    role: orgAdmin
+    table:
+      name: models
+      schema: public
+  type: create_delete_permission
+- args:
+    permission:
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+    role: orgAdmin
+    table:
+      name: organization_models
+      schema: public
+  type: create_delete_permission
+- args:
+    permission:
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+    role: orgAdmin
+    table:
+      name: users
+      schema: public
+  type: create_delete_permission

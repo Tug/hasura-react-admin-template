@@ -1,0 +1,8 @@
+{
+	"realm": "luxlunch",
+	"auth-server-url": "http://localhost:8180/auth/",
+	"ssl-required": "none",
+	"resource": "luxlunch-web-frontend-dev",
+	"public-client": true,
+	"confidential-port": 0
+}
