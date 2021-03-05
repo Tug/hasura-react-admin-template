@@ -14,3 +14,6 @@ DROP SEQUENCE public.job_type_id_seq;
 DROP SEQUENCE public.job_status_id_seq;
 DROP SEQUENCE public.model_id_seq;
 DROP SEQUENCE public.organizations_id_seq;
+
+DELETE FROM auth.roles WHERE role='admin';
+DELETE FROM auth.roles WHERE role='orgAdmin';

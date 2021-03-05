@@ -71,7 +71,7 @@ await_console() {
         sleep 1
     done
 
-    hasura metadata apply
+    #hasura metadata apply
 
     if [ "$mode" != "test" ]; then
         hasura console
@@ -87,7 +87,7 @@ trap clean_exit INT
 clean_exit() {
     echo "Cleaning up..."
     if [ "$mode" != "test" ]; then # Kill Hasura Console
-        hasura metadata export
+        #hasura metadata export
         ps -ef | grep 'hasura console' | grep -v grep | awk '{print $2}' | xargs kill -9
     fi
     # Stop all docker services

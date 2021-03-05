@@ -17,7 +17,7 @@ CREATE TABLE public.jobs (
     status_id integer DEFAULT 1,
     type_id integer,
     ended_at timestamp with time zone,
-    organization_id integer,
+    organization_id integer DEFAULT 1,
     creator_id uuid NOT NULL
 );
 
@@ -47,7 +47,7 @@ CREATE TABLE public.organization_models (
 CREATE TABLE public.organizations (
     id integer NOT NULL,
     name text NOT NULL,
-    admin_id uuid NOT NULL
+    admin_id uuid,
 );
 
 CREATE SEQUENCE public.job_id_seq
@@ -107,11 +107,17 @@ ALTER TABLE ONLY public.jobs ALTER COLUMN id SET DEFAULT nextval('public.job_id_
 ALTER TABLE ONLY public.models ALTER COLUMN id SET DEFAULT nextval('public.model_id_seq'::regclass);
 ALTER TABLE ONLY public.organizations ALTER COLUMN id SET DEFAULT nextval('public.organizations_id_seq'::regclass);
 
+INSERT INTO auth.roles (role)
+    VALUES ('admin'),('orgAdmin');
+
 INSERT INTO public.job_status (id, value)
     VALUES (1, 'pending'), (2, 'in progress'), (3, 'done'), (4, 'failed');
 
 INSERT INTO public.job_types (id, value)
     VALUES (1, 'generate'), (2, 'train'), (3, 'evaluate');
+
+INSERT INTO public.organizations (id, name)
+    VALUES (1, 'public');
 
 ALTER TABLE ONLY public.generated_text
     ADD CONSTRAINT generated_text_pkey PRIMARY KEY (id);

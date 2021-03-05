@@ -6,3 +6,5 @@
 .env.production
 
 config.*.yaml
+
+/migrations_backup

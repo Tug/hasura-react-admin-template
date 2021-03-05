@@ -18,6 +18,26 @@
   - name: roleByRole
     using:
       foreign_key_constraint_on: role
+  select_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - account_id
+      - created_at
+      - id
+      - role
+      filter:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+  - role: user
+    permission:
+      columns:
+      - role
+      filter:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
 - table:
     schema: auth
     name: accounts
@@ -50,6 +70,67 @@
         table:
           schema: auth
           name: refresh_tokens
+  insert_permissions:
+  - role: orgAdmin
+    permission:
+      check:
+        user:
+          organization_id:
+            _eq: X-Hasura-Organization-Id
+      columns:
+      - active
+      - default_role
+      - email
+      - mfa_enabled
+      - user_id
+      backend_only: false
+  select_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - active
+      - created_at
+      - default_role
+      - email
+      - is_anonymous
+      - mfa_enabled
+      - user_id
+      filter:
+        user:
+          organization_id:
+            _eq: X-Hasura-Organization-Id
+  - role: user
+    permission:
+      columns:
+      - active
+      - created_at
+      - default_role
+      - email
+      - id
+      - is_anonymous
+      - mfa_enabled
+      - new_email
+      - ticket_expires_at
+      - updated_at
+      - user_id
+      filter:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - active
+      - email
+      - is_anonymous
+      - mfa_enabled
+      - new_email
+      filter:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+      check: null
 - table:
     schema: auth
     name: providers
@@ -86,6 +167,356 @@
         table:
           schema: auth
           name: accounts
+  select_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - role
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - role
+      filter: {}
+- table:
+    schema: public
+    name: generated_text
+  object_relationships:
+  - name: job
+    using:
+      foreign_key_constraint_on: job_id
+- table:
+    schema: public
+    name: job_status
+  select_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - id
+      - value
+      filter: {}
+      allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+      - id
+      - value
+      filter: {}
+      allow_aggregations: true
+- table:
+    schema: public
+    name: job_types
+  select_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - id
+      - value
+      filter: {}
+      allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+      - id
+      - value
+      filter: {}
+      allow_aggregations: true
+- table:
+    schema: public
+    name: jobs
+  object_relationships:
+  - name: model
+    using:
+      foreign_key_constraint_on: model_id
+  - name: status
+    using:
+      foreign_key_constraint_on: status_id
+  - name: type
+    using:
+      foreign_key_constraint_on: type_id
+  array_relationships:
+  - name: generated_texts
+    using:
+      foreign_key_constraint_on:
+        column: job_id
+        table:
+          schema: public
+          name: generated_text
+  insert_permissions:
+  - role: orgAdmin
+    permission:
+      check:
+        creator_id:
+          _eq: X-Hasura-User-Id
+      columns:
+      - creator_id
+      - model_id
+      - name
+      - params
+      - type_id
+      backend_only: false
+  - role: user
+    permission:
+      check:
+        _or:
+        - creator_id:
+            _eq: X-Hasura-User-Id
+        - organization_id:
+            _eq: X-Hasura-Organization-Id
+      columns:
+      - creator_id
+      - model_id
+      - name
+      - organization_id
+      - params
+      - type_id
+      backend_only: false
+  select_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - id
+      - model_id
+      - organization_id
+      - status_id
+      - type_id
+      - params
+      - name
+      - created_at
+      - ended_at
+      - started_at
+      - creator_id
+      filter:
+        creator_id:
+          _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+      - id
+      - created_at
+      - started_at
+      - name
+      - model_id
+      - params
+      - status_id
+      - type_id
+      - ended_at
+      - organization_id
+      - creator_id
+      filter:
+        _or:
+        - creator_id:
+            _eq: X-Hasura-User-Id
+        - organization_id:
+            _eq: X-Hasura-Organization-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - params
+      filter:
+        creator_id:
+          _eq: X-Hasura-User-Id
+      check: null
+  - role: user
+    permission:
+      columns:
+      - name
+      - params
+      filter:
+        _or:
+        - creator_id:
+            _eq: X-Hasura-User-Id
+        - organization_id:
+            _eq: X-Hasura-Organization-Id
+      check: null
+  delete_permissions:
+  - role: orgAdmin
+    permission:
+      filter:
+        creator_id:
+          _eq: X-Hasura-User-Id
+  - role: user
+    permission:
+      filter:
+        _or:
+        - creator_id:
+            _eq: X-Hasura-User-Id
+        - organization_id:
+            _eq: X-Hasura-Organization-Id
+- table:
+    schema: public
+    name: models
+  object_relationships:
+  - name: parent_model
+    using:
+      foreign_key_constraint_on: parent_model_id
+  array_relationships:
+  - name: jobs
+    using:
+      foreign_key_constraint_on:
+        column: model_id
+        table:
+          schema: public
+          name: jobs
+  - name: organization_models
+    using:
+      foreign_key_constraint_on:
+        column: model_id
+        table:
+          schema: public
+          name: organization_models
+  insert_permissions:
+  - role: orgAdmin
+    permission:
+      check: {}
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+      backend_only: false
+  - role: user
+    permission:
+      check: {}
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+      backend_only: false
+  select_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+      filter: {}
+      allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+      filter: {}
+      allow_aggregations: true
+  update_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+      filter: {}
+      check: null
+  - role: user
+    permission:
+      columns:
+      - id
+      - parent_model_id
+      - name
+      - path
+      - created_at
+      filter: {}
+      check: null
+  delete_permissions:
+  - role: orgAdmin
+    permission:
+      filter: {}
+- table:
+    schema: public
+    name: organization_models
+  insert_permissions:
+  - role: orgAdmin
+    permission:
+      check:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+      columns:
+      - model_id
+      backend_only: false
+  select_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - model_id
+      - organization_id
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+      allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+      - model_id
+      - organization_id
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - organization_id
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+      check: null
+  delete_permissions:
+  - role: orgAdmin
+    permission:
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+- table:
+    schema: public
+    name: organizations
+  object_relationships:
+  - name: admin
+    using:
+      foreign_key_constraint_on: admin_id
+  array_relationships:
+  - name: models
+    using:
+      foreign_key_constraint_on:
+        column: organization_id
+        table:
+          schema: public
+          name: organization_models
+  select_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - admin_id
+      - id
+      - name
+      filter:
+        id:
+          _eq: X-Hasura-Organization-Id
+      allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+      - admin_id
+      - id
+      - name
+      filter:
+        id:
+          _eq: X-Hasura-Organization-Id
+      allow_aggregations: true
 - table:
     schema: public
     name: users
@@ -98,3 +529,78 @@
           name: accounts
         column_mapping:
           id: user_id
+  - name: organization
+    using:
+      foreign_key_constraint_on: organization_id
+  array_relationships:
+  - name: admin_user
+    using:
+      foreign_key_constraint_on:
+        column: admin_id
+        table:
+          schema: public
+          name: organizations
+  insert_permissions:
+  - role: orgAdmin
+    permission:
+      check:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+      columns:
+      - avatar_url
+      - display_name
+      - updated_at
+      backend_only: false
+  select_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - organization_id
+      - avatar_url
+      - display_name
+      - created_at
+      - updated_at
+      - id
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+      allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+      - avatar_url
+      - created_at
+      - display_name
+      - id
+      - organization_id
+      - updated_at
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: orgAdmin
+    permission:
+      columns:
+      - avatar_url
+      - display_name
+      - updated_at
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
+      check: null
+  - role: user
+    permission:
+      columns:
+      - avatar_url
+      - display_name
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: orgAdmin
+    permission:
+      filter:
+        organization_id:
+          _eq: X-Hasura-Organization-Id
