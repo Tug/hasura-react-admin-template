@@ -11,11 +11,33 @@ curl -H 'x-hasura-admin-secret: a_long_secret_that_should_never_be_used_in_produ
 ```
 Go to the Hasura console and copy your user id to the public organization admin_id
 
+## Running locally
+
+To start the containers needed for the backend just run:
+
+```
+./server/start.sh
+```
+
+Then cd to `client` and run `npm start`.
+
+
+## Deploying in production
+
+You can use [NHost](https://nhost.io/) for a managed stack.
+A lot is still TBD in terms of automating deployments.
+Assets should simply be uploaded to a static server or CDN.
+
 ### TODO
-- [ ] Move `server/start.sh` to `start.sh` and make it start the frontend as well
-- [ ] Create an alias for docker-compose using env variables
-- [ ] Actually make a production deployement script
-- [ ] Auto-create super admin user on initial start
-- [ ] Double check permissions in hasura
-- [ ] Add new auth strategy: SMS code
-- [ ] Finish building the frontend
+- [ ] [Ops] Create an alias for docker-compose using env variables
+- [ ] [Ops] Actually make a production deployment script
+- [ ] [Ops] Auto-create super admin user on initial start
+- [ ] [Hasura] Double check permissions on tables in hasura
+- [ ] [HBP] Add new auth strategies: SMS code or magic link
+- [ ] [HBP] Customize emails
+- [ ] [Frontend] configuration page for 2FA
+- [ ] [Frontend] Finish building the CRUD views
+- [ ] [Frontend] Super admin can invite other super admins
+- [ ] [Frontend] Org admins can invite user in their org
+- [ ] [Backend] Add a server for Hasura Actions or find a way to extend HBP
+- [ ] [Backend] A stripe connection for subscriptions and invoices
