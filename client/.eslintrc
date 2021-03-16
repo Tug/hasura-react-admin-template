@@ -19,6 +19,7 @@
 	"rules": {
 		"no-use-before-define": "off",
 		"prettier/prettier": "off",
+		"@typescript-eslint/no-unused-expressions": "off",
 		"no-restricted-imports": [
 			"error",
 			{

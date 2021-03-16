@@ -10,11 +10,11 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { OperationDefinitionNode } from 'graphql';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { Config } from './config';
-import { nhostAuthClient } from './nhost-clients';
+import nhost from './nhost-client';
 
 export const XHasuraClientName = 'hasura-client-name';
 
-const getAuthToken = (): string | null => nhostAuthClient.getJWTToken();
+const getAuthToken = (): string | null => nhost.auth.getJWTToken();
 
 const authHeaders: any = (token: string | undefined) => {
 	if (!token) {
@@ -30,7 +30,7 @@ const authLink = new ApolloLink((operation, forward) => {
 		return {
 			headers: {
 				...headers,
-				...authHeaders(nhostAuthClient.getJWTToken()),
+				...authHeaders(nhost.auth.getJWTToken()),
 			},
 		};
 	});

@@ -1,23 +1,22 @@
 import { AuthProvider, GET_ONE } from 'react-admin';
 import dataProviderFactory from '../data';
-import { Config, nhostAuthClient } from '../shared';
+import { nhost } from '../shared';
+import { AuthChangedFunction } from "nhost-js-sdk/dist/Auth";
 
 export class HBPAuth {
 	private currentUser: any;
-	private fetchingUser: Promise<any> | null;
 
 	constructor() {
 		this.currentUser = null;
-		this.fetchingUser = null;
 	}
 
 	async login(params: { email: string; password: string }) {
-		const mfaData = await nhostAuthClient.login(params.email, params.password);
+		const { mfa, user } = await nhost.auth.login(params);
 	}
 
-	logout() {
+	async logout() {
 		this.currentUser = null;
-		return nhostAuthClient.logout();
+		await nhost.auth.logout();
 	}
 
 	checkError(error: any): Promise<void> {
@@ -26,13 +25,24 @@ export class HBPAuth {
 				console.log('Caught error from react-admin-graphql', error);
 				return Promise.resolve();
 			}
-			return Promise.reject(error);
 		}
-		return Promise.resolve();
+		return Promise.reject(error);
 	}
 
 	checkAuth(params?: any): Promise<void> {
-		if (!this.isAuthenticated()) {
+		if (nhost.auth.isAuthenticated() === null) { // nhost still loading
+			return new Promise<void>((resolve, reject) => {
+				const unsubscribe = nhost.auth.onAuthStateChanged((isAuthenticated: boolean) => {
+					unsubscribe();
+					if (!isAuthenticated) {
+						reject(new Error('Unauthenticated'));
+					} else {
+						resolve();
+					}
+				});
+			});
+		}
+		if (nhost.auth.isAuthenticated() === false) {
 			return Promise.reject(new Error('Unauthenticated'));
 		}
 		return Promise.resolve();
@@ -56,7 +66,7 @@ export class HBPAuth {
 
 	async getIdentity(): Promise<any> {
 		try {
-			this.checkAuth();
+			await this.checkAuth();
 			const {
 				id,
 				display_name,
@@ -85,31 +95,31 @@ export class HBPAuth {
 	}
 
 	async getPermissions(params: any) {
-		if (!nhostAuthClient.isAuthenticated()) {
+		if (!nhost.auth.isAuthenticated()) {
 			return [];
 		}
-		return nhostAuthClient.getClaim('x-hasura-allowed-roles');
+		return nhost.auth.getClaim('x-hasura-allowed-roles');
 	}
 
 	getJWTToken() {
-		if (!nhostAuthClient.isAuthenticated()) {
+		if (!nhost.auth.isAuthenticated()) {
 			return null;
 		}
-		return nhostAuthClient.getJWTToken();
+		return nhost.auth.getJWTToken();
 	}
 
 	getUserId() {
-		if (!nhostAuthClient.isAuthenticated()) {
+		if (!nhost.auth.isAuthenticated()) {
 			return null;
 		}
-		return nhostAuthClient.getClaim('x-hasura-user-id');
+		return nhost.auth.getClaim('x-hasura-user-id');
 	}
 
-	isAuthenticated(): boolean {
-		return !!nhostAuthClient.isAuthenticated();
+	isAuthenticated(): boolean|null {
+		return nhost.auth.isAuthenticated();
 	}
 
-	onAuthStateChanged(fn: Function): Function {
-		return (nhostAuthClient.onAuthStateChanged(fn) as unknown) as Function;
+	onAuthStateChanged(fn: AuthChangedFunction): Function {
+		return nhost.auth.onAuthStateChanged(fn);
 	}
 }

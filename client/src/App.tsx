@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {Admin, Resource, TranslationProvider, Loading, ListGuesser, EditGuesser} from 'react-admin';
+import {Admin, Resource, TranslationProvider, ListGuesser, EditGuesser} from 'react-admin';
 import { createBrowserHistory } from 'history';
 
 import { authProvider, dataProviderFactory, i18nProvider } from './providers';
-import { Layout, Login } from './layout';
+import { Layout, Login, Loading } from './layout';
 import { Dashboard } from './dashboard';
 import routes from './routes';
 import { reducers } from './state';
@@ -16,7 +16,7 @@ const history = createBrowserHistory();
 
 const App = () => {
 	const [dataProvider, setDataProvider] = useState<any>();
-	const [authenticated, setAuthenticated] = useState<boolean>(
+	const [authenticated, setAuthenticated] = useState<boolean|null>(
 		authProvider.isAuthenticated(),
 	);
 
