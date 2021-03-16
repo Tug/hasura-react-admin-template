@@ -5,12 +5,6 @@ This is a template for starting a new SaaS project with everything build in:
 - Hasura Backend Plus for Authentication and Storage
 - React-Admin frontend which connects to hasura and has ready to use views
 
-## Getting Started
-```bash
-curl -H 'x-hasura-admin-secret: a_long_secret_that_should_never_be_used_in_production' -d '{"email":"tug@tugdev.net", "password":"StrongPasswordNot1234", "user_data": { "first_name": "Tugdual", "last_name": "de Kerviler"}}' -H "Content-Type: application/json" -X POST http://localhost:4000/auth/register
-```
-Go to the Hasura console and copy your user id to the public organization admin_id
-
 ## Running locally
 
 To start the containers needed for the backend just run:
@@ -21,6 +15,12 @@ To start the containers needed for the backend just run:
 
 Then cd to `client` and run `npm start`.
 
+### Creating a super admin account
+First register as a default user:
+```bash
+curl -d '{"email":"tug@tugdev.net", "password":"StrongPasswordNot1234", "user_data": { "first_name": "Tugdual", "last_name": "de Kerviler"}}' -H "Content-Type: application/json" -X POST http://localhost:4000/auth/register
+```
+Navigate to `http://localhost:8080/console/data/schema/auth/tables/accounts/browse` and replace your `default_role` with `admin`.
 
 ## Deploying in production
 
