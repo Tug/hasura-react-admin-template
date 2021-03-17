@@ -24,7 +24,7 @@ Navigate to `http://localhost:8080/console/data/schema/auth/tables/accounts/brow
 
 ## Deploying in production
 
-You can use [NHost](https://nhost.io/) for a managed stack.
+You can use [Nhost](https://nhost.io/) for a managed stack.
 A lot is still TBD in terms of automating deployments.
 Assets should simply be uploaded to a static server or CDN.
 
