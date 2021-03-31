@@ -123,9 +123,6 @@ ALTER TABLE ONLY public.organization_models
     ADD CONSTRAINT organization_models_pkey PRIMARY KEY (organization_id, model_id);
 ALTER TABLE ONLY public.organizations
     ADD CONSTRAINT organizations_pkey PRIMARY KEY (id);
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-CREATE TRIGGER set_public_users_updated_at BEFORE UPDATE ON public.users FOR EACH ROW EXECUTE FUNCTION public.set_current_timestamp_updated_at();
 ALTER TABLE ONLY public.generated_text
     ADD CONSTRAINT generated_text_job_id_fkey FOREIGN KEY (job_id) REFERENCES public.jobs(id) ON UPDATE CASCADE ON DELETE CASCADE;
 ALTER TABLE ONLY public.jobs
