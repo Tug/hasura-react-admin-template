@@ -379,62 +379,52 @@
     permission:
       check: {}
       columns:
-      - id
-      - parent_model_id
-      - name
-      - path
       - created_at
+      - id
+      - name
+      - parent_model_id
+      - type_id
       backend_only: false
   - role: user
     permission:
       check: {}
       columns:
-      - id
-      - parent_model_id
-      - name
-      - path
       - created_at
+      - id
+      - name
+      - parent_model_id
+      - type_id
       backend_only: false
   select_permissions:
   - role: orgAdmin
     permission:
       columns:
-      - id
-      - parent_model_id
-      - name
-      - path
       - created_at
+      - id
+      - name
+      - parent_model_id
       filter: {}
       allow_aggregations: true
   - role: user
     permission:
       columns:
-      - id
-      - parent_model_id
-      - name
-      - path
       - created_at
+      - id
+      - name
+      - parent_model_id
       filter: {}
       allow_aggregations: true
   update_permissions:
   - role: orgAdmin
     permission:
       columns:
-      - id
-      - parent_model_id
       - name
-      - path
-      - created_at
       filter: {}
       check: null
   - role: user
     permission:
       columns:
-      - id
-      - parent_model_id
       - name
-      - path
-      - created_at
       filter: {}
       check: null
   delete_permissions:
