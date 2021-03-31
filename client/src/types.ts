@@ -5,6 +5,14 @@ export interface AppState extends ReduxState {
 	theme: ThemeName;
 }
 
+export interface Model extends Record {
+	id: number;
+	name: String;
+	path: String;
+	created_at: Date;
+	parent_model_id: number;
+}
+
 export interface Job extends Record {
 	id: number;
 	created_at: Date;

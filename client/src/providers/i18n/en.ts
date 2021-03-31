@@ -32,6 +32,7 @@ const customEnglishMessages = {
 			messages: 'Messages',
 			configuration: 'Configuration',
 			logout: 'Logout',
+			profile: 'My Profile',
 		},
 		dashboard: {
 			new_employees: 'New Employees',
@@ -46,6 +47,9 @@ const customEnglishMessages = {
 				return_button: 'Back to the homepage',
 				contact_button: 'Contact us',
 			},
+		},
+		profile: {
+			title: 'My Profile',
 		},
 		configuration: {
 			title: "Configuration",
@@ -94,6 +98,10 @@ const customEnglishMessages = {
 		},
 		models: {
 			name: 'Models',
+		},
+		users: {
+			title: 'Users',
+			role: 'Role',
 		}
 	},
 };

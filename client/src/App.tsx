@@ -53,33 +53,13 @@ const App = () => {
 			history={history}
 			disableTelemetry
 		>
-			<Resource
-				name="models"
-				list={models.list}
-				edit={models.edit}
-				create={models.create}
-				icon={models.icon}
-			/>
-			<Resource
-				name="jobs"
-				list={jobs.list}
-				edit={jobs.edit}
-				create={jobs.create}
-				icon={jobs.icon}
-			/>
-			<Resource
-				name="users"
-				list={users.list}
-				edit={users.edit}
-				create={users.create}
-				icon={users.icon}
-			/>
-			<Resource
-				name="organizations"
-				list={organizations.list}
-				edit={organizations.edit}
-				icon={organizations.icon}
-			/>
+			<Resource name="models" {...models} />
+			<Resource name="jobs" {...jobs} />
+			<Resource name="users" {...users} />
+			<Resource name="organizations" {...organizations} />
+			<Resource name="job_types"/>
+			<Resource name="job_status"/>
+			<Resource name="model_types"/>
 		</Admin>
 	);
 };

@@ -348,11 +348,17 @@
             _eq: X-Hasura-Organization-Id
 - table:
     schema: public
+    name: model_types
+- table:
+    schema: public
     name: models
   object_relationships:
   - name: parent_model
     using:
       foreign_key_constraint_on: parent_model_id
+  - name: type
+    using:
+      foreign_key_constraint_on: type_id
   array_relationships:
   - name: jobs
     using:
@@ -485,10 +491,17 @@
     schema: public
     name: organizations
   object_relationships:
-  - name: admin
+  - name: owner
     using:
-      foreign_key_constraint_on: admin_id
+      foreign_key_constraint_on: owner_id
   array_relationships:
+  - name: members
+    using:
+      foreign_key_constraint_on:
+        column: organization_id
+        table:
+          schema: public
+          name: users
   - name: models
     using:
       foreign_key_constraint_on:
@@ -500,7 +513,7 @@
   - role: orgAdmin
     permission:
       columns:
-      - admin_id
+      - owner_id
       - id
       - name
       filter:
@@ -510,7 +523,7 @@
   - role: user
     permission:
       columns:
-      - admin_id
+      - owner_id
       - id
       - name
       filter:
@@ -532,14 +545,6 @@
   - name: organization
     using:
       foreign_key_constraint_on: organization_id
-  array_relationships:
-  - name: admin_user
-    using:
-      foreign_key_constraint_on:
-        column: admin_id
-        table:
-          schema: public
-          name: organizations
   insert_permissions:
   - role: orgAdmin
     permission:

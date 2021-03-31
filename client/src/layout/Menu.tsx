@@ -34,6 +34,9 @@ const Menu: FC<Props> = ({ onMenuClick, dense, logout }) => {
 				if (resource.name === 'organizations' && (!permissionsLoaded || (!permissions.includes('admin')))) {
 					return null;
 				}
+				if (!resource.hasList) {
+					return null;
+				}
 				return (
 					<MenuItemLink
 						key={resource.name}

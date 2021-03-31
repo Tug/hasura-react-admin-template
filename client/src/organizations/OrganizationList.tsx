@@ -1,30 +1,17 @@
 import * as React from 'react';
-import { FC, Fragment, useCallback, useEffect, useState } from 'react';
+import { FC, Fragment } from 'react';
 import {
-	AutocompleteInput,
-	BooleanField,
+	ChipField,
 	Datagrid,
-	DatagridProps,
-	DateField,
-	DateInput,
-	Filter,
-	FilterProps,
-	Identifier,
 	List,
-	ListContextProvider,
-	ListProps,
-	NullableBooleanInput,
-	NumberField,
-	ReferenceInput,
+	ReferenceManyField,
 	ReferenceField,
-	SearchInput,
+	SingleFieldList,
 	TextField,
-	TextInput,
-	useGetList,
 	useListContext,
 	useAuthenticated,
 } from 'react-admin';
-import { useMediaQuery, Divider, Tabs, Tab, Theme } from '@material-ui/core';
+import { useMediaQuery, Theme } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -43,7 +30,20 @@ const TabbedDatagrid: FC<any> = (props) => {
 			<Datagrid>
 				<TextField source="id" />
 				<TextField source="name" />
-				<ReferenceField source="admin_id" reference="users"><TextField source="display_name" /></ReferenceField>
+				<ReferenceField source="owner_id" reference="users" label="Owner">
+					<TextField source="display_name" />
+				</ReferenceField>
+				<ReferenceManyField
+					sort={{ field: 'created_at', order: 'DESC' }}
+					perPage={10}
+					label="Members"
+					reference="users"
+					target="organization_id"
+				>
+					<SingleFieldList>
+						<ChipField source="display_name" />
+					</SingleFieldList>
+				</ReferenceManyField>
 			</Datagrid>
 		</Fragment>
 	);

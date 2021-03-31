@@ -1,9 +1,10 @@
-import { GET_ONE, GET_LIST } from 'react-admin';
+import { GET_ONE, GET_LIST, UPDATE } from 'react-admin';
 import { ResourceType, FetchType, buildFields } from 'ra-data-hasura';
 
 import { GET_USER } from './queries/users';
 import { GET_JOB } from './queries/jobs';
 import { GET_ORGANIZATION } from "./queries/organizations";
+import { GET_MODEL } from "./queries/models";
 
 /**
  * Extracts just the fields from a GraphQL AST.
@@ -17,6 +18,11 @@ const CUSTOM_QUERIES: any = {
 	users: {
 		[GET_ONE]: GET_USER,
 		[GET_LIST]: GET_USER,
+		[UPDATE]: GET_USER,
+	},
+	models: {
+		[GET_ONE]: GET_MODEL,
+		[GET_LIST]: GET_MODEL,
 	},
 	jobs: {
 		[GET_ONE]: GET_JOB,

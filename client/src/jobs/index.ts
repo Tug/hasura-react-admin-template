@@ -1,11 +1,10 @@
 import JobIcon from '@material-ui/icons/DirectionsRun';
 
 import JobList from './JobList';
-import JobEdit from './JobEdit';
+import JobCreate from './JobCreate';
 
 export default {
 	list: JobList,
-	edit: JobEdit,
-	create: undefined,
+	create: JobCreate,
 	icon: JobIcon,
 };

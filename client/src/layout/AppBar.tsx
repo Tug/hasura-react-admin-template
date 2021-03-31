@@ -8,7 +8,7 @@ import {
 } from 'react-admin';
 import Typography from '@material-ui/core/Typography';
 import SettingsIcon from '@material-ui/icons/Settings';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import PersonIcon from '@material-ui/icons/Person';
 import { makeStyles } from '@material-ui/core/styles';
 
 import Logo from './Logo';
@@ -28,6 +28,20 @@ const useStyles = makeStyles({
 	},
 });
 
+const ProfileMenu = forwardRef<any, any>((props, ref) => {
+	const translate = useTranslate();
+	return (
+		<MenuItemLink
+			ref={ref}
+			to="/me"
+			primaryText={translate('admin.menu.profile')}
+			leftIcon={<PersonIcon />}
+			onClick={props.onClick}
+			sidebarIsOpen
+		/>
+	);
+});
+
 const ConfigurationMenu = forwardRef<any, any>((props, ref) => {
 	const translate = useTranslate();
 	return (
@@ -44,6 +58,7 @@ const ConfigurationMenu = forwardRef<any, any>((props, ref) => {
 
 const CustomUserMenu = (props: any) => (
 	<UserMenu {...props}>
+		<ProfileMenu />
 		<ConfigurationMenu />
 	</UserMenu>
 );

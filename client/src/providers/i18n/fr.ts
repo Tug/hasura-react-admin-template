@@ -32,6 +32,7 @@ const customFrenchMessages = {
 			messages: 'Messages',
 			configuration: 'Configuration',
 			logout: 'Se déconnecter',
+			profile: 'Mon Profil',
 		},
 		dashboard: {
 			new_employees: 'Nouveaux employés',
@@ -102,6 +103,13 @@ const customFrenchMessages = {
 					'La confirmation du mot de passe est différent du mot de passe.',
 			},
 		},
+		models: {
+			name: 'Modèles',
+		},
+		users: {
+			title: 'Utilisateurs',
+			role: 'Role',
+		}
 	},
 };
 

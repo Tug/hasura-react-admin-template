@@ -12,6 +12,7 @@ import {
 	required,
 	TextField,
 	Toolbar,
+	useGetIdentity,
 	useTranslate,
 } from 'react-admin';
 import { Link as RouterLink } from 'react-router-dom';
@@ -24,38 +25,33 @@ import {
 	Link,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { paths } from '../routes';
 
 const useEditStyles = makeStyles({
 	root: { alignItems: 'flex-start' },
 });
 
-const ProfileForm: FC<any> = (props) => {
-	return (
-		<SimpleForm>
-			<ReferenceInput
-				label="User"
-				source="userId"
-				reference="users"
-				validate={[required()]}
-			>
-				<SelectInput optionText="name" />
-			</ReferenceInput>
-			<TextInput source="email" label="Email" validate={[required()]} />
-		</SimpleForm>
-	);
-};
-
-const ProfileEdit: FC<any> = (props) => {
+const ProfileEdit: FC<any> = ({ permissions, ...props }: { permissions: any, props: any }) => {
 	const classes = useEditStyles();
 	const translate = useTranslate();
+	const { identity, loading: identityLoading } = useGetIdentity();
+	if (identityLoading) {
+		return null;
+	}
 	return (
 		<Edit
 			title={translate('admin.profile.title')}
 			classes={classes}
+			basePath={paths.ME}
+			redirect={false}
+			resource="users"
+			id={identity.id}
 			{...props}
-			component="div"
 		>
-			<ProfileForm />
+			<SimpleForm>
+				<TextInput source="account.email" label="E-mail" disabled />
+				<TextInput source="display_name" label="Name" />
+			</SimpleForm>
 		</Edit>
 	);
 };

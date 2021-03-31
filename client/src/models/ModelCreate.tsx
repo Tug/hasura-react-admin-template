@@ -2,11 +2,11 @@ import * as React from 'react';
 import { FC } from 'react';
 import {
 	Create,
-	FormTab,
 	NumberInput,
 	ReferenceInput,
+	SectionTitle,
 	SelectInput,
-	TabbedForm,
+	SimpleForm,
 	TextInput,
 	required,
 } from 'react-admin';
@@ -25,77 +25,35 @@ export const styles = {
 const useStyles = makeStyles(styles);
 
 const ModelCreate: FC = props => {
-	const classes = useStyles();
+	const classes = useStyles(props);
 	return (
 		<Create {...props}>
-			<TabbedForm>
-				<FormTab label="resources.models.tabs.image">
-					<TextInput
-						autoFocus
-						source="image"
-						fullWidth
-						validate={required()}
-					/>
-					<TextInput
-						source="thumbnail"
-						fullWidth
-						validate={required()}
-					/>
-				</FormTab>
-				<FormTab label="resources.models.tabs.details" path="details">
-					<TextInput source="reference" validate={required()} />
-					<NumberInput
-						source="price"
-						validate={required()}
-						className={classes.price}
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">
-									€
-								</InputAdornment>
-							),
-						}}
-					/>
-					<NumberInput
-						source="width"
-						validate={required()}
-						className={classes.width}
-						formClassName={classes.widthFormGroup}
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position="start">
-									cm
-								</InputAdornment>
-							),
-						}}
-					/>
-					<NumberInput
-						source="height"
-						validate={required()}
-						className={classes.height}
-						formClassName={classes.heightFormGroup}
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position="start">
-									cm
-								</InputAdornment>
-							),
-						}}
-					/>
-					<ReferenceInput
-						source="category_id"
-						reference="categories"
-						allowEmpty
-					>
-						<SelectInput source="name" />
-					</ReferenceInput>
-					<NumberInput
-						source="stock"
-						validate={required()}
-						className={classes.stock}
-					/>
-				</FormTab>
-			</TabbedForm>
+			<SimpleForm>
+				<ReferenceInput
+					label="Model type"
+					source="type_id"
+					reference="model_types"
+				>
+					<SelectInput source="id" />
+				</ReferenceInput>
+				<TextInput
+					autoFocus
+					source="name"
+					validate={required()}
+				/>
+				<TextInput
+					source="path"
+					validate={required()}
+				/>
+				<ReferenceInput
+					label="Parent model"
+					source="parent_model_id"
+					reference="models"
+					allowEmpty
+				>
+					<SelectInput source="id" />
+				</ReferenceInput>
+			</SimpleForm>
 		</Create>
 	);
 };

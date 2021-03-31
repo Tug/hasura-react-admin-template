@@ -16,11 +16,12 @@ To start the containers needed for the backend just run:
 Then cd to `client` and run `npm start`.
 
 ### Creating a super admin account
-First register as a default user:
+Boot the local server (`./start.sh dev`) then register a new super-admin user with:
 ```bash
-curl -d '{"email":"tug@tugdev.net", "password":"StrongPasswordNot1234", "user_data": { "first_name": "Tugdual", "last_name": "de Kerviler"}}' -H "Content-Type: application/json" -X POST http://localhost:4000/auth/register
+curl -d '{"email":"tug@tugdev.net", "password":"StrongPasswordNot1234", "register_options": { "default_role": "admin", "allowed_roles": ["admin", "orgAdmin", "user", "me"]}}' -H "Content-Type: application/json" -X POST http://localhost:4000/auth/register
 ```
-Navigate to `http://localhost:8080/console/data/schema/auth/tables/accounts/browse` and replace your `default_role` with `admin`.
+By default, new accounts need to be activated. Navigate to Mailhog at http://localhost:8025/ to view the activation email.
+
 
 ## Deploying in production
 
@@ -31,7 +32,6 @@ Assets should simply be uploaded to a static server or CDN.
 ### TODO
 - [ ] [Ops] Create an alias for docker-compose using env variables
 - [ ] [Ops] Actually make a production deployment script
-- [ ] [Ops] Auto-create super admin user on initial start
 - [ ] [Hasura] Double check permissions on tables in hasura
 - [ ] [HBP] Add new auth strategies: SMS code or magic link
 - [ ] [HBP] Customize emails

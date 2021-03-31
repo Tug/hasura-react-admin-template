@@ -46,7 +46,7 @@ const TabbedDatagrid: FC<any> = (props) => {
 			<Datagrid optimized rowClick="edit">
 				<TextField source="id" />
 				<TextField source="name" />
-				<TextField source="path" />
+				<ReferenceField source="type_id" reference="model_types" link={false}><TextField source="name" /></ReferenceField>
 				<DateField source="created_at" sortByOrder="DESC" />
 				<ReferenceArrayField
 					label="Jobs"

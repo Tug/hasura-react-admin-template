@@ -1,36 +1,31 @@
 import * as React from 'react';
 import { FC } from 'react';
 import {
-	BooleanInput,
+	BooleanInput, Create,
 	DateField,
 	Edit,
 	EditProps,
 	FormWithRedirect,
 	Labeled,
-	ReferenceField,
-	SelectInput,
-	TextField,
+	ReferenceField, ReferenceInput, required, SectionTitle,
+	SelectInput, SimpleForm,
+	TextField, TextInput,
 	Toolbar,
 	useTranslate,
 } from 'react-admin';
-import { Link as RouterLink } from 'react-router-dom';
 import {
 	Card,
 	CardContent,
-	Box,
-	Grid,
-	Typography,
-	Link,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { Job } from '../types';
+import { Model } from '../types';
 
-interface JobTitleProps {
-	record?: Job;
+interface ModelTitleProps {
+	record?: Model;
 }
 
-const JobTitle: FC<JobTitleProps> = ({ record }) => {
+const ModelTitle: FC<ModelTitleProps> = ({ record }) => {
 	const translate = useTranslate();
 	return record ? (
 		<span>
@@ -45,28 +40,40 @@ const useEditStyles = makeStyles({
 	root: { alignItems: 'flex-start' },
 });
 
-const JobForm = (props: any) => {
-	const translate = useTranslate();
-	return (
-		<FormWithRedirect
-			{...props}
-			render={(formProps: any) => (
-				<Box maxWidth="50em">
-					<Card>
-						<CardContent>
-							<Grid container spacing={1}></Grid>
-						</CardContent>
-					</Card>
-				</Box>
-			)}
-		/>
-	);
-};
 const ModelEdit: FC<any> = (props) => {
 	const classes = useEditStyles();
 	return (
-		<Edit title={<JobTitle />} classes={classes} {...props} component="div">
-			<JobForm />
+		<Edit title={<ModelTitle />} classes={classes} {...props} component="div">
+			<FormWithRedirect
+				{...props}
+				render={(formProps: any) => (
+					<Card>
+						<form>
+							<CardContent>
+								<TextInput
+									autoFocus
+									source="name"
+									resource="models"
+									validate={required()}
+								/>
+								<TextInput
+									source="path"
+									resource="models"
+									validate={required()}
+								/>
+								<ReferenceInput
+									label="Parent model"
+									source="parent_model_id"
+									reference="models"
+									allowEmpty
+								>
+									<SelectInput source="id" />
+								</ReferenceInput>
+							</CardContent>
+						</form>
+					</Card>
+				)}
+			/>
 		</Edit>
 	);
 };

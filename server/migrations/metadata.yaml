@@ -489,7 +489,7 @@ tables:
   object_relationships:
   - name: admin
     using:
-      foreign_key_constraint_on: admin_id
+      foreign_key_constraint_on: owner_id
   array_relationships:
   - name: models
     using:
@@ -502,7 +502,7 @@ tables:
   - role: orgAdmin
     permission:
       columns:
-      - admin_id
+      - owner_id
       - id
       - name
       filter:
@@ -512,7 +512,7 @@ tables:
   - role: user
     permission:
       columns:
-      - admin_id
+      - owner_id
       - id
       - name
       filter:
@@ -538,7 +538,7 @@ tables:
   - name: admin_user
     using:
       foreign_key_constraint_on:
-        column: admin_id
+        column: owner_id
         table:
           schema: public
           name: organizations

@@ -2,8 +2,12 @@ import gql from 'graphql-tag';
 
 export const GET_ORGANIZATION = gql`
 	{
-		admin_id
+		owner_id
 		id
-		name
+		name,
+		members {
+			id
+			display_name
+		}
 	}
 `;
