@@ -11,8 +11,6 @@ services:
     image: hasura/graphql-engine:v1.3.3.cli-migrations-v2
     depends_on:
       - 'postgres'
-    ports:
-      - '5000:8080'
     restart: unless-stopped
     environment:
       HASURA_GRAPHQL_ADMIN_SECRET: '${HASURA_GRAPHQL_ADMIN_SECRET:?HASURA_GRAPHQL_ADMIN_SECRET}'
@@ -25,11 +23,10 @@ services:
       - ./metadata:/hasura-metadata
   hasura-backend-plus:
     image: nhost/hasura-backend-plus:v2.2.4
+    restart: unless-stopped
     depends_on:
       - 'graphql-engine'
       - 'minio'
-    ports:
-      - '4000:4000'
     environment:
       HASURA_GRAPHQL_ADMIN_SECRET: '${HASURA_GRAPHQL_ADMIN_SECRET:?HASURA_GRAPHQL_ADMIN_SECRET}'
       HASURA_ENDPOINT: http://graphql-engine:8080/v1/graphql

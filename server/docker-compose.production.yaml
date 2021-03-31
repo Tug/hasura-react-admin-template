@@ -1,0 +1,11 @@
+version: '3.6'
+services:
+  hasura-backend-plus:
+    env_file: '.env.production'
+  frontend:
+    build: ../client
+    
+networks:
+  default:
+    external:
+      name: nginxproxymanager_default
