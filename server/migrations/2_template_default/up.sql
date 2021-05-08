@@ -16,7 +16,8 @@ CREATE TABLE public.jobs (
     type_id integer,
     ended_at timestamp with time zone,
     organization_id integer DEFAULT 1,
-    creator_id uuid NOT NULL
+    creator_id uuid NOT NULL,
+    status_details text
 );
 CREATE SEQUENCE public.job_id_seq
     AS integer
@@ -140,7 +141,7 @@ ALTER TABLE ONLY public.organization_models
 ALTER TABLE ONLY public.organization_models
     ADD CONSTRAINT organization_models_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES public.organizations(id) ON UPDATE CASCADE ON DELETE SET NULL;
 ALTER TABLE ONLY public.organizations
-    ADD CONSTRAINT organizations_admin_id_fkey FOREIGN KEY (owner_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT organizations_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES public.organizations(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
